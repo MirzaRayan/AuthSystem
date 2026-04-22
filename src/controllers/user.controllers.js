@@ -1,4 +1,3 @@
-import e from "express";
 import { User } from "../models/User.models.js";
 
 const methodForGeneratingAccessToken = async (userId) => {
@@ -143,7 +142,25 @@ const loginUser = async (req, res) => {
      }
 }
 
+const getLoggedInUserData = async (req, res) => {
+    try {
+
+        // returning the data of the loggedIn user from req.user
+        return res.status(200).json({
+            message: 'successfully fetched data of loggedIn user',
+            data: req.user
+        })
+
+
+    } catch (error) {
+        console.log('Error while getting data of loggedIN user',error);
+        return res.status(500).json({
+            message:'Server error while getting data of the loggedIn user'
+        })
+    }
+}
 
 
 
-export {registerUser, loginUser}
+
+export {registerUser, loginUser, getLoggedInUserData}

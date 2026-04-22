@@ -1,11 +1,11 @@
 import { User } from "../models/User.models.js";
 import jwt from 'jsonwebtoken'
 
-export const verifyJWT = async (req, res) => {
+export const verifyJWT = async (req, res, next) => {
     try {
 
         // getting accessToken from cookies
-        const token = req.cookie?.accessToken
+        const token = req.cookies?.accessToken
 
         // checking if token exists 
         if(!token) {
@@ -31,7 +31,8 @@ export const verifyJWT = async (req, res) => {
             return res.status(401).send('Invalid Access Token');
         }
 
-        req.user = user
+        req.user = user;
+        next();
     } catch (error) {
         console.log(error);
         return res.status(500).send("Invalid or expired token");

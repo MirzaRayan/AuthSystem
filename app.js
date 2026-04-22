@@ -11,9 +11,9 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 
-import UserRouter from './src/routes/user.routes.js'
+import UserRoutes from './src/routes/user.routes.js'
 
-app.use('/api/user',UserRouter);
+app.use('/api/user',UserRoutes);
 
 
 export default app;

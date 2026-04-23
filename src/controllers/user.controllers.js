@@ -160,7 +160,60 @@ const getLoggedInUserData = async (req, res) => {
     }
 }
 
+const updateUser = async (req, res) => {
+    try {
+
+        // this will get the the input fields that user send
+        const key = Object.keys(req.body);
+
+
+        // this is a check ----- that user can only change this field
+        const allowedFields = ['name','email'];
+
+
+        // validating if user's fields match with the allowedFields
+        const validField = key.every((field) => allowedFields.includes(field));
+
+
+        // if it is not valid field then throw error 
+        if(!validField) {
+            return res.status(401).json({
+                message: 'User cannot update this field'
+            })
+        }
 
 
 
-export {registerUser, loginUser, getLoggedInUserData}
+        // getting data of the user that want to update his profile
+        const updatedUser = await User.findByIdAndUpdate(
+            req.user._id,
+            req.body,
+            { new: true }
+        ).select('-password')
+
+
+        // checking if updatedUser exists
+        if(!updatedUser) {
+            return res.status(404).json({
+                message: 'User Not Found'
+            })
+        }
+
+        // returning response 
+        return res.status(200).json({
+            message: 'User Updated Successfully',
+            data: updatedUser
+        })
+
+    } catch (error) {
+        console.log('Server Error while updating user',error);
+        return res.status(500).json({
+            message: 'Server error while updating user'
+        })
+    }
+}
+
+
+
+
+export {registerUser, loginUser, getLoggedInUserData, updateUser}

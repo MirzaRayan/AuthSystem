@@ -213,7 +213,36 @@ const updateUser = async (req, res) => {
     }
 }
 
+const deleteUser = async (req, res) => {
+    try {
+
+        // deleting user using his id
+        const deletedUser = await User.findByIdAndDelete(req.user._id)
+
+        // checking if user exists or not 
+        if(!deleteUser) {
+            return res.status(404).json({
+                message: 'user does not found'
+            })
+        }
+
+        // returning response and clearning cookies
+        return res.status(200)
+        .clearCookie('accessToken')
+        .json({
+            message: 'User deleted Successfully',
+        })
+
+
+    } catch (error) {
+        console.log('Server Error while deleting User',error);
+        return res.status(500).json({
+            message: 'Server Error while deleting User'
+        })
+        
+    }
+}
 
 
 
-export {registerUser, loginUser, getLoggedInUserData, updateUser}
+export {registerUser, loginUser, getLoggedInUserData, updateUser, deleteUser}

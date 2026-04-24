@@ -1,4 +1,5 @@
 import { User } from "../models/User.models.js";
+import bcrypt from 'bcrypt'
 
 const methodForGeneratingAccessToken = async (userId) => {
     try {
@@ -220,7 +221,7 @@ const deleteUser = async (req, res) => {
         const deletedUser = await User.findByIdAndDelete(req.user._id)
 
         // checking if user exists or not 
-        if(!deleteUser) {
+        if(!deletedUser) {
             return res.status(404).json({
                 message: 'user does not found'
             })
@@ -243,6 +244,76 @@ const deleteUser = async (req, res) => {
     }
 }
 
+const changePassword = async (req, res) => {
+    try {
+        
+        // getting data from input fields
+        const { oldPassword, newPassword } = req.body
 
 
-export {registerUser, loginUser, getLoggedInUserData, updateUser, deleteUser}
+        // checking if there is an empty field
+        if(!oldPassword || !newPassword) {
+            return res.status(400).json({
+                message: 'Both fields are required!'
+            })
+        }
+
+        // checking if password is less than 6 characters
+        if (newPassword.length < 6) {
+            return res.status(400).json({
+              message: "Password must be at least 6 characters"
+            });
+          }
+
+
+        // checking if old password is same as the new one
+        if (oldPassword === newPassword) {
+            return res.status(400).json({
+              message: "New password must be different"
+            });
+          }
+
+        // getting access of user by his id
+        const user = await User.findById(req.user._id)
+
+
+        // checking if user exists or not 
+        if(!user) {
+            return res.status(404).json({
+                message: 'User not found!'
+            })
+        }
+
+        // comparing old password with the password saved in db
+        const isMatched = await bcrypt.compare(oldPassword, user.password)
+
+        if(!isMatched) {
+            return res.status(401).json({
+                message: 'password does not match'
+            })
+        }
+
+        user.password = newPassword
+        
+        await user.save()
+
+        // deleting cookie and returning response 
+        return res.status(200)
+        .clearCookie('accessToken')
+        .json({
+            message: 'Password changed successfully',
+        })
+
+
+    } catch (error) {
+        console.log('Server Error while changing password',error);
+        return res.status(500).json({
+            message: 'Server Error while changing password'
+        })
+        
+    }
+}
+
+
+
+export {registerUser, loginUser, getLoggedInUserData, updateUser, deleteUser, changePassword}

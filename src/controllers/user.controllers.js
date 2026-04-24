@@ -314,6 +314,31 @@ const changePassword = async (req, res) => {
     }
 }
 
+const logOutUser = async (req, res) => {
+    try {
+
+        // checking if user exists or not
+        if(!req.user) {
+            return res.status(401).json({
+                message: 'unAuthorized Req'
+            })
+        }
+
+        // clearing accessToken and returning response
+        return res.status(200)
+        .clearCookie('accessToken')
+        .json({
+            message: 'User loggedOut successfully'
+        })
+    } catch (error) {
+        console.log('Server Error while logging out User',error);
+        return res.status(500).json({
+            message: 'Server Error while logging out user'
+        })
+        
+    }
+}
 
 
-export {registerUser, loginUser, getLoggedInUserData, updateUser, deleteUser, changePassword}
+
+export {registerUser, loginUser, getLoggedInUserData, updateUser, deleteUser, changePassword, logOutUser}

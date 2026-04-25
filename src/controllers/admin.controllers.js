@@ -78,6 +78,33 @@ const deleteUser = async (req, res) => {
     }
 }
 
+const getStats = async (req, res) => {
+    try {
+        const countUser = await User.countDocuments({
+            role: 'user'
+        });
+
+        const countAdmin = await User.countDocuments({
+            role: 'admin'
+        });
 
 
-export { getAllUsers, getOneUser, deleteUser }
+        return res.status(200).json({
+            message: 'stats fetched successfully',
+            data:{
+                countUser,
+                countAdmin
+            }
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: 'Server error while getting stats'
+        })
+        
+    }
+}
+
+
+
+export { getAllUsers, getOneUser, deleteUser, getStats }

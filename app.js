@@ -16,4 +16,9 @@ import UserRoutes from './src/routes/user.routes.js'
 app.use('/api/user',UserRoutes);
 
 
+import AdminRoutes from './src/routes/admin.routes.js'
+
+app.use('/api/admin',AdminRoutes)
+
+
 export default app;

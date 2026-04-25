@@ -32,7 +32,7 @@ export const verifyJWT = async (req, res, next) => {
         }
 
         req.user = user;
-        next();
+        next()
     } catch (error) {
         console.log(error);
         return res.status(500).send("Invalid or expired token");
